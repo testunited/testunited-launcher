@@ -32,21 +32,23 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 			selectors.add(DiscoverySelectors.selectPackage(testBundle.testPackage));
 		}
 
-		LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request().selectors(selectors).build();
+		LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+				.selectors(selectors).build();
 
 		var launcher = LauncherFactory.create();
 
-		var testPlan = launcher.discover(request);
-
-		Set<TestIdentifier> testRoots = testPlan.getRoots();
-
-		logger.info("-----Tests Discovered-----");
-		for (var testRoot : testRoots) {
-			logger.info(">" + testRoot.getDisplayName());
-			for (var testClass : testPlan.getChildren(testRoot)) {
-				logger.info("->" + testClass.getDisplayName());
-				for (var test : testPlan.getChildren(testClass)) {
-					logger.info("-->" + test.getDisplayName());
+		if(logger.isInfoEnabled()){
+			var testPlan = launcher.discover(request);
+			var testRoots = testPlan.getRoots();
+			
+			logger.info("-----Tests Discovered-----");
+			for (var testRoot : testRoots) {
+				logger.info(">" + testRoot.getDisplayName());
+				for (var testClass : testPlan.getChildren(testRoot)) {
+					logger.info("->" + testClass.getDisplayName());
+					for (var test : testPlan.getChildren(testClass)) {
+						logger.info("-->" + test.getDisplayName());
+					}
 				}
 			}
 		}

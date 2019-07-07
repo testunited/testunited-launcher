@@ -30,8 +30,12 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testunited.api.PropertyReader;
 
 public class TestArtifactManager {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	public static final String DEFAULT_LOCAL_REPOSITORY = "m2";
 	public static final String DEFAULT_LOCAL_REPOSITORY_CACHE = "m2-cache";
 	public static final String DEFAULT_TEST_ARTIFACT_CACHE = "test-jars";
@@ -45,8 +49,12 @@ public class TestArtifactManager {
 
 		var artifactManager = new TestArtifactManager(testRunnerArgs.resolutionMode);
 		artifactManager.m2LocalHome = DEFAULT_LOCAL_REPOSITORY;
-		artifactManager.addRemoteRepository("deps", "default", "https://repo.deps.co/chamithsri/snapshots", 
-				"DEPS6HOT54LRQDKB2EYR", "xIMkoIxBZUyA355BMp6VoD5J7406E9ROM_n7KhEo");
+		artifactManager.addRemoteRepository(
+				PropertyReader.getPropValue("testunited.testbundles.repo.url"),
+				"default", 
+				PropertyReader.getPropValue("testunited.testbundles.repo.url"), 
+				PropertyReader.getPropValue("testunited.testbundles.repo.username"), 
+				PropertyReader.getPropValue("testunited.testbundles.repo.password"));
 		artifactManager.resolveTestBundles(testRunnerArgs.testBundles);
 
 	}
@@ -76,12 +84,12 @@ public class TestArtifactManager {
 		try {
 			ArtifactResult artifactResult = repositorySystem.resolveArtifact(repositorySystemSession, artifactRequest);
 			artifact = artifactResult.getArtifact();
-			System.out.printf("artifact %s resolved to %s\n", artifact, artifact.getFile());
+			logger.info("artifact {} resolved to {}\n", artifact, artifact.getFile());
 
 			this.copyToCache(artifact);
 
 		} catch (Exception e) {
-			System.err.printf("error resolving artifact: %s\n", e.getMessage());
+			logger.error("error resolving artifact: {}\n", e.getMessage());
 		}
 	}
 
@@ -108,6 +116,7 @@ public class TestArtifactManager {
 			if (!Files.exists(copied))
 				Files.createSymbolicLink(copied, original);
 		} catch (Exception e) {
+			logger.error("error creating the symbolic link: {}\n", e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -121,7 +130,7 @@ public class TestArtifactManager {
 		serviceLocator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
 			@Override
 			public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
-				System.err.printf("error creating service: %s\n", exception.getMessage());
+				logger.error("error creating service: {}\n", exception.getMessage());
 				exception.printStackTrace();
 			}
 		});
