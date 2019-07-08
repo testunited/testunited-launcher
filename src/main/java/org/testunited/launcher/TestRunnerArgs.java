@@ -12,10 +12,10 @@ public class TestRunnerArgs {
 
 	List<TestBundle> testBundles;
 	TestBundleResolutionMode resolutionMode;
-	String environment;
+	String callbackUrl;
 	private static String ARG_TEST_BUNDLE_IDS = "TEST_BUNDLE_IDS";
 	private static String ARG_TEST_BUNDLE_MODE = "TEST_BUNDLE_MODE";
-	private static String ARG_ENV = "ENV";
+	private static String ARG_CALLBACK_URL = "CALLBACK_URL";
 
 	private static final TestBundleResolutionMode DEFAULT_RESOLUTION_MODE = TestBundleResolutionMode.Classpath;
 	private static final String DEFAULT_ENV = "";
@@ -78,8 +78,8 @@ public class TestRunnerArgs {
 		return resolutionMode;
 	}
 	
-	private static String getEnv(String envArg) {
-		return (envArg == null)? DEFAULT_ENV:envArg;
+	private static String getCallbackUrl(String envArg) {
+		return envArg;
 	}
 
 	public static TestRunnerArgs parse(String... args) {
@@ -100,7 +100,7 @@ public class TestRunnerArgs {
 
 		testRunnerArgs.testBundles = getTestBundles(argValues.get(ARG_TEST_BUNDLE_IDS));
 		testRunnerArgs.resolutionMode = getResolutionMode(argValues.get(ARG_TEST_BUNDLE_MODE));
-		testRunnerArgs.environment = getEnv(argValues.get(ARG_ENV));
+		testRunnerArgs.callbackUrl = getCallbackUrl(argValues.get(ARG_CALLBACK_URL));
 
 		logger.info("--------TEST BUNDLES---------");
 		for (var testBundle : testRunnerArgs.testBundles)

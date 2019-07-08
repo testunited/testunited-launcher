@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConsoleRepositoryEventListener extends AbstractRepositoryListener {
-	Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Override
 	public void artifactInstalled(RepositoryEvent event) {
