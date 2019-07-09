@@ -20,7 +20,6 @@ public class TestRunnerArgs {
 	private static final TestBundleResolutionMode DEFAULT_RESOLUTION_MODE = TestBundleResolutionMode.Classpath;
 	private static final String DEFAULT_ENV = "";
 
-
 	public static HashMap<String, String> getArgValues(String... args) throws IllegalArgumentException {
 		HashMap<String, String> argValues = new HashMap<String, String>();
 
@@ -77,7 +76,7 @@ public class TestRunnerArgs {
 
 		return resolutionMode;
 	}
-	
+
 	private static String getCallbackUrl(String envArg) {
 		return envArg;
 	}
@@ -93,20 +92,30 @@ public class TestRunnerArgs {
 			return null;
 		}
 
-		logger.info("---------arguments---------");
-		for (var key : argValues.keySet())
-			logger.info("[{}:{}]", key, argValues.get(key));
-		logger.info("---------------------------");
+		if (logger.isDebugEnabled()) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("\n---------ARGS---------\n");
+			for (var key : argValues.keySet())
+				sb.append(String.format("[%s:%s]\n", key, argValues.get(key)));
+			sb.append("\n---------------------------\n");
+
+			logger.debug(sb.toString());
+		}
 
 		testRunnerArgs.testBundles = getTestBundles(argValues.get(ARG_TEST_BUNDLE_IDS));
 		testRunnerArgs.resolutionMode = getResolutionMode(argValues.get(ARG_TEST_BUNDLE_MODE));
 		testRunnerArgs.callbackUrl = getCallbackUrl(argValues.get(ARG_CALLBACK_URL));
 
-		logger.info("--------TEST BUNDLES---------");
-		for (var testBundle : testRunnerArgs.testBundles)
-			logger.info(">{}",testBundle.toString());
-		logger.info("Total: {}", testRunnerArgs.testBundles.size());
+		if (logger.isDebugEnabled()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("\n--------TEST BUNDLES---------");
+			for (var testBundle : testRunnerArgs.testBundles)
+				sb.append("\n" + testBundle.toString());
+			sb.append("\n---------------------------\n");
+			logger.debug(sb.toString());
 
+		}
 		return testRunnerArgs;
 	}
 }

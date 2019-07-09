@@ -1,7 +1,11 @@
 HELP.md
 .gradle/
-/build/
+build/
+bin/
 !gradle/wrapper/gradle-wrapper.jar
+m2
+m2-cache
+test-jars
 
 ### STS ###
 .apt_generated

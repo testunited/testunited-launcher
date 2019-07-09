@@ -45,20 +45,24 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 
 		var launcher = LauncherFactory.create();
 
-		if(logger.isInfoEnabled()){
+		if(logger.isDebugEnabled()){
 			var testPlan = launcher.discover(request);
 			var testRoots = testPlan.getRoots();
 			
-			logger.info("-----Tests Discovered-----");
+			StringBuilder sb = new StringBuilder();
+			sb.append("\n-----Tests Discovered-----");
 			for (var testRoot : testRoots) {
-				logger.info(">" + testRoot.getDisplayName());
+				sb.append("\n>" + testRoot.getDisplayName());
 				for (var testClass : testPlan.getChildren(testRoot)) {
-					logger.info("->" + testClass.getDisplayName());
+					sb.append("\n-->" + testClass.getLegacyReportingName());
 					for (var test : testPlan.getChildren(testClass)) {
-						logger.info("-->" + test.getDisplayName());
+						sb.append("\n---->" + test.getDisplayName());
 					}
 				}
 			}
+			sb.append("\n-------------------------\n");
+
+			logger.debug(sb.toString());
 		}
 
 		launcher.execute(request, new TestUnitedTestExecutionListener());
@@ -78,9 +82,9 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 			logger.info("Posting test results to {}.", callbackUrl);
 			rawResponse = httpclient.execute(postMethod);
 
-			int http_status_expected = 200;
+			int http_status_actual = rawResponse.getStatusLine().getStatusCode();
 
-			if (rawResponse.getStatusLine().getStatusCode() == http_status_expected) {
+			if (http_status_actual == 200 || http_status_actual == 201) {
 				logger.info("SUCCESSFUL: Posting test results to {}.", callbackUrl);
 			} else {
 				logger.error("FAILED: Posting test results to {}. \n HTTP_STATUS:{}\n{}", callbackUrl,
@@ -96,10 +100,10 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 		} finally {
 		}
 	}
+	
 	@Override
 	public void run(String... args) {
 		TestRunnerArgs testRunnerArgs = TestRunnerArgs.parse(args);
-//		System.setProperty("env", testRunnerArgs.environment);
 		this.runTests(testRunnerArgs.testBundles);
 		this.callback(testRunnerArgs.callbackUrl);
 	}
