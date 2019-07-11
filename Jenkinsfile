@@ -1,7 +1,7 @@
 pipeline {
     agent any 
     environment {
-        REGISTRY="learnright-int:5000"
+        REGISTRY="registry.minikube.local:80"
         DOCKER_IMAGE_LOCAL="testunited/testunited-launcher"
         DOCKER_IMAGE_REMOTE="${REGISTRY}/${DOCKER_IMAGE_LOCAL}:latest"
     }
