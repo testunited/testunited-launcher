@@ -46,7 +46,6 @@ publishing {
 }
 docker {
     name "testunited/${jar.baseName}:latest"
-    println("Doker Image: testunited/${jar.baseName}")
     files jar.archivePath, 'startup.sh'
     copySpec.from("build/libs").into(".")
     buildArgs(['JAR_FILE': "${jar.baseName}-${jar.version}.jar"])
