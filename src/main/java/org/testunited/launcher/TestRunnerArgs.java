@@ -13,9 +13,12 @@ public class TestRunnerArgs {
 	List<TestBundle> testBundles;
 	TestBundleResolutionMode resolutionMode;
 	String callbackUrl;
+	String sessionId;
+	
 	private static String ARG_TEST_BUNDLE_IDS = "TEST_BUNDLE_IDS";
 	private static String ARG_TEST_BUNDLE_MODE = "TEST_BUNDLE_MODE";
 	private static String ARG_CALLBACK_URL = "CALLBACK_URL";
+	private static String ARG_SESSION_ID = "SESSION_ID";
 
 	private static final TestBundleResolutionMode DEFAULT_RESOLUTION_MODE = TestBundleResolutionMode.Classpath;
 	private static final String DEFAULT_ENV = "";
@@ -81,6 +84,10 @@ public class TestRunnerArgs {
 		return envArg;
 	}
 
+	private static String getSessionId(String sessionIdArg) {
+		return sessionIdArg;
+	}
+	
 	public static TestRunnerArgs parse(String... args) {
 		TestRunnerArgs testRunnerArgs = new TestRunnerArgs();
 		HashMap<String, String> argValues = null;
@@ -106,7 +113,8 @@ public class TestRunnerArgs {
 		testRunnerArgs.testBundles = getTestBundles(argValues.get(ARG_TEST_BUNDLE_IDS));
 		testRunnerArgs.resolutionMode = getResolutionMode(argValues.get(ARG_TEST_BUNDLE_MODE));
 		testRunnerArgs.callbackUrl = getCallbackUrl(argValues.get(ARG_CALLBACK_URL));
-
+		testRunnerArgs.sessionId = getSessionId(argValues.get(ARG_SESSION_ID));
+		
 		if (logger.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\n--------TEST BUNDLES---------");

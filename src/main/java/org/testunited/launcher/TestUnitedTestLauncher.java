@@ -26,6 +26,7 @@ import java.util.Set;
 
 public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	Logger logger = LoggerFactory.getLogger(getClass());
+	private static final String SESSION_ID_KEY = "testunited.testsession.id";
 
 	public static void main(String[] args) throws IOException {
 
@@ -104,6 +105,7 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	@Override
 	public void run(String... args) {
 		TestRunnerArgs testRunnerArgs = TestRunnerArgs.parse(args);
+		System.setProperty(SESSION_ID_KEY, testRunnerArgs.sessionId);
 		this.runTests(testRunnerArgs.testBundles);
 		this.callback(testRunnerArgs.callbackUrl);
 	}

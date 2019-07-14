@@ -8,4 +8,5 @@
   <root level="${LOGBACK_LOG_LEVEL}">
     <appender-ref ref="STDOUT" />
   </root>
+  <logger name="org.testunited" level="debug" />
 </configuration>
