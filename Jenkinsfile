@@ -23,7 +23,6 @@ pipeline {
         }
         stage('Publish') { 
             steps {
-                sh "gradle publish publishToMavenLocal"
                 sh "docker tag ${DOCKER_IMAGE_LOCAL} ${DOCKER_IMAGE_REMOTE}"
                 sh "docker push ${DOCKER_IMAGE_REMOTE}"
             }
