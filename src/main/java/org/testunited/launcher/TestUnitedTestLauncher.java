@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	Logger logger = LoggerFactory.getLogger(getClass());
-	private static final String SESSION_ID_KEY = "testunited.testsession.id";
+	private static final String SESSION_NAME_KEY = "testunited.testsession.name";
 
 	public static void main(String[] args) throws IOException {
 
@@ -70,6 +70,12 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	}
 
 	private void callback(String callbackUrl) {
+		
+		if(callbackUrl == null || callbackUrl.isEmpty()) {
+			logger.info("Exiting as no callback url was provided.");
+			return;
+		}
+		
 		HttpClient httpclient = HttpClients.createDefault();
 		String payload = "{"
 				+ "\"status\":\"complete\""
@@ -105,7 +111,7 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	@Override
 	public void run(String... args) {
 		TestRunnerArgs testRunnerArgs = TestRunnerArgs.parse(args);
-		System.setProperty(SESSION_ID_KEY, testRunnerArgs.sessionId);
+		System.setProperty(SESSION_NAME_KEY, testRunnerArgs.sessionName);
 		this.runTests(testRunnerArgs.testBundles);
 		this.callback(testRunnerArgs.callbackUrl);
 	}
