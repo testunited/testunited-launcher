@@ -18,7 +18,7 @@ public class TestRunnerArgs {
 	private static String ARG_TEST_BUNDLE_IDS = "TEST_BUNDLE_IDS";
 	private static String ARG_TEST_BUNDLE_MODE = "TEST_BUNDLE_MODE";
 	private static String ARG_CALLBACK_URL = "CALLBACK_URL";
-	private static String ARG_SESSION_NAME = "SESSION_ID";
+	private static String ARG_SESSION_NAME = "SESSION_NAME";
 
 	private static final TestBundleResolutionMode DEFAULT_RESOLUTION_MODE = TestBundleResolutionMode.Classpath;
 	private static final String DEFAULT_ENV = "";
@@ -94,11 +94,18 @@ public class TestRunnerArgs {
 
 		argValues = getArgValues(args);
 
-		if (argValues == null || !argValues.containsKey(ARG_TEST_BUNDLE_IDS)) {
-			logger.info("Argument '{}' is missing", ARG_TEST_BUNDLE_IDS);
-			return null;
+		if(argValues == null) {
+			throw new IllegalArgumentException("Error parsing the arguments");
 		}
 
+		if (!argValues.containsKey(ARG_TEST_BUNDLE_IDS)) {
+			throw new IllegalArgumentException(String.format("Required argument '{}' is missing", ARG_TEST_BUNDLE_IDS));
+		}
+
+		if (!argValues.containsKey(ARG_SESSION_NAME)) {
+			throw new IllegalArgumentException(String.format("Required argument '{}' is missing", ARG_SESSION_NAME));
+		}
+		
 		if (logger.isDebugEnabled()) {
 			StringBuilder sb = new StringBuilder();
 

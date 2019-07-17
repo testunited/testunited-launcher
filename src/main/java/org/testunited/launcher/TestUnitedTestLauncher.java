@@ -111,6 +111,11 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	@Override
 	public void run(String... args) {
 		TestRunnerArgs testRunnerArgs = TestRunnerArgs.parse(args);
+		
+		if(testRunnerArgs == null) {
+			logger.error("Error parsing the arguments.");			
+		}
+		
 		System.setProperty(SESSION_NAME_KEY, testRunnerArgs.sessionName);
 		this.runTests(testRunnerArgs.testBundles);
 		this.callback(testRunnerArgs.callbackUrl);
