@@ -115,12 +115,12 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 		TestRunnerArgs testRunnerArgs = TestRunnerArgs.parse(args);
 		
 		if(testRunnerArgs == null) {
-			logger.error("Error parsing the arguments.");			
+			logger.error("Error parsing the arguments.");
+			return;
 		}
 		
 		System.setProperty(SESSION_NAME_KEY, testRunnerArgs.sessionName);
-		var summary = this.runTests(testRunnerArgs.testBundles);
-		
+		var summary = this.runTests(testRunnerArgs.testBundles);		
 		
 		this.callback(testRunnerArgs.callbackUrl, summary.getTestSessionId());
 	}
