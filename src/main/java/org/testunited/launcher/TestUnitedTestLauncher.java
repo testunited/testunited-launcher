@@ -16,6 +16,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testunited.api.TestResultSubmissionSummary;
 import org.testunited.api.TestUnitedTestApplication;
 import org.testunited.api.TestUnitedTestExecutionListener;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -33,7 +35,7 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 		new TestUnitedTestLauncher().run(args);
 	}
 
-	private void runTests(List<TestBundle> testBundles) {
+	private TestResultSubmissionSummary runTests(List<TestBundle> testBundles) {
 
 		var selectors = new ArrayList<PackageSelector>();
 
@@ -66,10 +68,13 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 			logger.debug(sb.toString());
 		}
 
-		launcher.execute(request, new TestUnitedTestExecutionListener());
+		var listener = new TestUnitedTestExecutionListener();
+		launcher.execute(request, listener);
+		
+		return listener.getSummary();
 	}
 
-	private void callback(String callbackUrl) {
+	private void callback(String callbackUrl, UUID testSessionId) {
 		
 		if(callbackUrl == null || callbackUrl.isEmpty()) {
 			logger.info("Exiting as no callback url was provided.");
@@ -77,10 +82,7 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 		}
 		
 		HttpClient httpclient = HttpClients.createDefault();
-		String payload = "{"
-				+ "\"status\":\"complete\""
-				+ "}";
-		StringEntity requestEntity = new StringEntity(payload, ContentType.APPLICATION_JSON);
+		StringEntity requestEntity = new StringEntity(testSessionId.toString(), ContentType.APPLICATION_JSON);
 		HttpPost postMethod = new HttpPost(callbackUrl);
 		postMethod.setEntity(requestEntity);
 		HttpResponse rawResponse = null;
@@ -117,7 +119,9 @@ public class TestUnitedTestLauncher implements TestUnitedTestApplication {
 		}
 		
 		System.setProperty(SESSION_NAME_KEY, testRunnerArgs.sessionName);
-		this.runTests(testRunnerArgs.testBundles);
-		this.callback(testRunnerArgs.callbackUrl);
+		var summary = this.runTests(testRunnerArgs.testBundles);
+		
+		
+		this.callback(testRunnerArgs.callbackUrl, summary.getTestSessionId());
 	}
 }
