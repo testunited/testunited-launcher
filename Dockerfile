@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:11-jre-slim
 WORKDIR /app
 ARG JAR_FILE
 VOLUME ["/app/m2"]
