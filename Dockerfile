@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:17-alpine
 WORKDIR /app
 ARG JAR_FILE
 VOLUME ["/app/m2"]
